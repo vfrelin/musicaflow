@@ -32,6 +32,8 @@ export default function FullPlayerModal() {
     errorMessage,
     isFullPlayerOpen,
     setIsFullPlayerOpen,
+    showVideo,
+    setShowVideo,
     togglePlayPause,
     handleNextTrack,
     handlePrevTrack,
@@ -79,15 +81,27 @@ export default function FullPlayerModal() {
           <p className="text-xs text-neutral-200 font-medium">MusicaFlow Stream</p>
         </div>
 
-        <button
-          onClick={() => setShowQueue(!showQueue)}
-          className={`p-2.5 rounded-full transition-colors ${
-            showQueue ? 'bg-[#FF0033] text-white' : 'bg-white/5 hover:bg-white/10 text-white'
-          }`}
-          title="Ver Cola"
-        >
-          <ListMusic className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowVideo(!showVideo)}
+            className={`px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all ${
+              showVideo
+                ? 'bg-[#FF0033] text-white shadow-md shadow-red-950'
+                : 'bg-white/10 text-neutral-300 hover:text-white'
+            }`}
+          >
+            {showVideo ? 'Modo Video' : 'Solo Audio'}
+          </button>
+          <button
+            onClick={() => setShowQueue(!showQueue)}
+            className={`p-2.5 rounded-full transition-colors ${
+              showQueue ? 'bg-[#FF0033] text-white' : 'bg-white/5 hover:bg-white/10 text-white'
+            }`}
+            title="Ver Cola"
+          >
+            <ListMusic className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       {/* Main Body: Switch between Artwork and Queue */}

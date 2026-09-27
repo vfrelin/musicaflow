@@ -8,7 +8,31 @@ import SettingsModal from './components/SettingsModal';
 import HomeView from './views/HomeView';
 import SearchView from './views/SearchView';
 import LibraryView from './views/LibraryView';
-import { PlayerProvider } from './context/PlayerContext';
+import { PlayerProvider, usePlayer } from './context/PlayerContext';
+
+function AudioEngine() {
+  const { showVideo, setShowVideo } = usePlayer();
+  return (
+    <div
+      className={
+        showVideo
+          ? "fixed top-20 left-1/2 -translate-x-1/2 z-[60] w-[92vw] max-w-md aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/20"
+          : "fixed bottom-0 left-0 w-1 h-1 opacity-[0.001] pointer-events-none -z-50 overflow-hidden"
+      }
+    >
+      {showVideo && (
+        <button
+          onClick={() => setShowVideo(false)}
+          className="absolute top-2 right-2 z-10 px-2 py-1 rounded-full bg-black/80 hover:bg-black text-white text-xs font-bold"
+          title="Ocultar video"
+        >
+          ✕
+        </button>
+      )}
+      <div id="yt-hidden-player" className="w-full h-full" />
+    </div>
+  );
+}
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -84,6 +108,8 @@ export default function App() {
             onReloadData={handleReloadData}
           />
         )}
+        {/* Persistent YouTube Audio & Video Engine */}
+        <AudioEngine />
       </div>
     </PlayerProvider>
   );

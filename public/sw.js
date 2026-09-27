@@ -1,39 +1,25 @@
-const CACHE_NAME = 'musicaflow-cache-v1';
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json'
-];
+// MusicaFlow Service Worker - Network First to prevent stale chunks
+const CACHE_NAME = 'musicaflow-v2';
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE).catch(() => {});
-    })
-  );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
+  // Clear any old caches from previous versions immediately
   event.waitUntil(
     caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
-    })
+      return Promise.all(keys.map((key) => caches.delete(key)));
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
-  // Let audio and API streams pass through directly without caching
+  // Never intercept YouTube API or streaming requests
   if (
-    event.request.url.includes('/streams/') ||
+    event.request.url.includes('youtube.com') ||
     event.request.url.includes('googlevideo.com') ||
+    event.request.url.includes('ytimg.com') ||
     event.request.url.includes('/api/') ||
     event.request.url.includes('piped') ||
     event.request.url.includes('invidious')
@@ -41,9 +27,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Network first: always get the latest bundle from Vercel
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      return cachedResponse || fetch(event.request).catch(() => cachedResponse);
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        return networkResponse;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });

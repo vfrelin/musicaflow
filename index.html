@@ -8,6 +8,7 @@
     <!-- PWA & Mobile Meta Tags -->
     <meta name="description" content="Reproductor de música estilo YouTube Music sin anuncios ni suscripción con audio en segundo plano." />
     <meta name="theme-color" content="#030303" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="MusicaFlow" />
@@ -20,6 +21,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Cache Purge Script to ensure users never get stuck on stale 404 bundles -->
+    <script>
+      if ('caches' in window) {
+        caches.keys().then(function(names) {
+          for (var i = 0; i < names.length; i++) {
+            if (names[i] === 'musicaflow-cache-v1') {
+              caches.delete(names[i]);
+            }
+          }
+        });
+      }
+    </script>
   </head>
   <body class="bg-[#030303] text-white selection:bg-[#FF0033] selection:text-white antialiased overflow-x-hidden select-none">
     <div id="root"></div>
